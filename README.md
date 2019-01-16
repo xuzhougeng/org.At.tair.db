@@ -11,6 +11,13 @@ GO注释, 基因对应文章, 基因对应的SYMBOL, 以及基因对应的功能
 - PMID不能为空
 - 处理数据时, 字符串一定要注意不要被R语言默认转成因子
 
+用到了如下文件
+
+- ATH_GO_TERM.txt: 该文件来自于`cat ATH_GO_GOSLIM.txt | cut -f 1,6,8,10 > ATH_GO_TERM.txt`, 从原始的文件提取必要的三列
+- Locus_Published_20171231.txt: 每个基因所关联的文献
+- gene_aliases_20171231.txt: 基因对应的别名
+- Araport11_functional_descriptions_20171231.txt: 每个基因的功能说明
+
 ```r
 library(RSQLite)
 library(AnnotationForge)
