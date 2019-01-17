@@ -1,8 +1,11 @@
 # org.At.tair.db
 
-物种包的构建代码如下:
-
 GO注释, 基因对应文章, 基因对应的SYMBOL, 以及基因对应的功能描述下载自 <https://zenodo.org/record/2530282#.XDLgk1wzaUk>
+
+- ATH_GO_TERM.txt: 该文件来自于`cat ATH_GO_GOSLIM.txt | cut -f 1,6,8,10 > ATH_GO_TERM.txt`, 从原始的文件提取必要的三列
+- Locus_Published_20171231.txt: 每个基因所关联的文献
+- gene_aliases_20171231.txt: 基因对应的别名
+- Araport11_functional_descriptions_20171231.txt: 每个基因的功能说明
 
 构建注释包主要借助于`AnnotationForge`包. 如果你要构建属于你自己的物种包的话, 需要注意如下事情
 
@@ -10,6 +13,8 @@ GO注释, 基因对应文章, 基因对应的SYMBOL, 以及基因对应的功能
 - 每个数据框不能有重复的行
 - PMID不能为空
 - 处理数据时, 字符串一定要注意不要被R语言默认转成因子
+
+我在构建物种包时用到的代码如下:
 
 ```r
 library(RSQLite)
