@@ -23,7 +23,7 @@ install.packages("https://raw.githubusercontent.com/xuzhougeng/org.At.tair.db/ma
 repos=NULL,type="source")
 ```
 
-**注**: 和"org.At.tair.db"不同，我
+**注**: 和"org.At.tair.db"不同，你不能用TAIR作为keytype传给cluserProfiler::enrichGO, 而是用GID.
 
 如果安装失败，可能是依赖包没有装好，可以安装旧版本的拟南芥注释，把依赖包装好
 
