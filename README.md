@@ -19,6 +19,8 @@ GO注释, 基因对应文章, 基因对应的SYMBOL, 以及基因对应的功能
 - gene_aliases_20180330.txt.gz: 基因对应的别名
 - Araport11_functional_descriptions_20180330.txt.gz : 每个基因的功能说明
 
+创建包的代码见`org.At.tair.db.R`, 我构建GO注释中剔除不可靠的IEA对应GO, 也就是没有审查的电子注释部分。
+
 构建注释包主要借助于`AnnotationForge`包. 如果你要构建属于你自己的物种包的话, 需要注意如下事情
 
 - 每个数据框都必须要有GID列
@@ -26,6 +28,7 @@ GO注释, 基因对应文章, 基因对应的SYMBOL, 以及基因对应的功能
 - PMID不能为空
 - 处理数据时, 字符串一定要注意不要被R语言默认转成因子
 
+<<<<<<< HEAD
 我在构建物种包时用到的代码如下:
 
 **保证**上面提到的4个文件和你代码在同级目录下
@@ -117,11 +120,16 @@ makeOrgPackage(go=go_df,
 ```
 
 安装方法
+=======
+安装注释包的方法如下:
+>>>>>>> 919ee0fb4b3ac528a49933beef43e9c5686abbfb
 
 ```{r}
 install.packages("https://raw.githubusercontent.com/xuzhougeng/org.At.tair.db/master/org.Atair10.eg.db.tgz",
 repos=NULL,type="source")
 ```
+
+**注**: 和"org.At.tair.db"不同，你不能用TAIR作为keytype传给cluserProfiler::enrichGO, 而是用GID.
 
 如果安装失败，可能是依赖包没有装好，可以安装旧版本的拟南芥注释，把依赖包装好
 
