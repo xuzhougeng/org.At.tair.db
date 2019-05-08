@@ -122,8 +122,6 @@ makeOrgPackage(go=go_df,
 安装方法
 =======
 安装注释包的方法如下:
->>>>>>> 919ee0fb4b3ac528a49933beef43e9c5686abbfb
-
 ```{r}
 install.packages("https://raw.githubusercontent.com/xuzhougeng/org.At.tair.db/master/org.Atair10.eg.db.tgz",
 repos=NULL,type="source")
