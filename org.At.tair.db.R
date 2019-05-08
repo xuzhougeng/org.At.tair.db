@@ -20,7 +20,7 @@ colnames(go_df) <- c("GID","GO","ONTOLOGY","EVIDENCE")
 
 
 # GENE-PUB的数据框
-pub_df <- read.table("./Locus_Published_20171231.txt",
+pub_df <- read.table("./Locus_Published_20180330.txt.gz",
                      sep="\t",
                      header = TRUE)
 
@@ -35,7 +35,7 @@ colnames(pub_df) <- c("GID","GENEID","REFID",
                       "PMID","PUBYEAR")
 
 # GENE-SYMBOL的注释数据库
-symbol_df <- read.table("./gene_aliases_20171231.txt",
+symbol_df <- read.table("./gene_aliases_20180330.txt.gz",
                         sep = "\t",
                         header = TRUE)
 symbol_df <- symbol_df[grepl(pattern = "^AT\\d", symbol_df$name),]
@@ -43,7 +43,7 @@ colnames(symbol_df) <- c("GID","SYMBOL","FULL_NAME")
 
 
 # GENE-FUNCTION
-func_df <- read.table("./Araport11_functional_descriptions_20171231.txt",
+func_df <- read.table("./Araport11_functional_descriptions_20180330.txt.gz",
                       sep = "\t",
                       header=TRUE)
 func_df <- func_df[grepl(pattern = "^AT\\d", func_df$name),]
@@ -63,7 +63,7 @@ func_df <- func_df[!duplicated(func_df),]
 
 # no duplicated row
 # all GID should be same type, be aware of factor
-
+file_path <- file.path( getwd())
 makeOrgPackage(go=go_df,
                pub_info = pub_df,
                symbol_info = symbol_df,
@@ -71,7 +71,7 @@ makeOrgPackage(go=go_df,
                version = "0.1",
                maintainer = "xuzhougeng <xuzhougeng@163.com>",
                author="xuzhogueng <xuzhougeng@163.com>",
-               outputDir = "F:/Project/org.At.tair.db",
+               outputDir = file_path,
                tax_id = "3702",
                genus = "At",
                species = "tair10",
