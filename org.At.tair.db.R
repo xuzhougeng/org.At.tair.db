@@ -55,6 +55,10 @@ colnames(func_df) <- c("GID","TXID","GENE_MODEL_TYPE",
                        "SHORT_DESCRIPTION",
                        "CURATED_DESCRIPTION",
                        "DESCRIPTION")
+func_df$SHORT_DESCRIPTION <- ifelse(nchar(func_df$SHORT_DESCRIPTION) == 0, 
+                                    NA, func_df$SHORT_DESCRIPTION)
+
+func_df$DESCRIPTION <- gsub("\\(source:Araport11\\)","", func_df$DESCRIPTION)
 
 ## remove duplicated
 go_df <- go_df[!duplicated(go_df), ]
