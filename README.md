@@ -10,7 +10,50 @@
 
 根据TAIR10提供的2018-03-30的注释信息，更新了我的注释包构建代码
 
+**由于** GitHub单文件限制50M，最新版本的构建结果大于50MB，因此请仔细阅读**代码安装**
+
+构建环境信息如下
+
+```R
+> sessionInfo()
+R version 3.6.0 (2019-04-26)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows >= 8 x64 (build 9200)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=Chinese (Simplified)_China.936  LC_CTYPE=Chinese (Simplified)_China.936   
+[3] LC_MONETARY=Chinese (Simplified)_China.936 LC_NUMERIC=C                              
+[5] LC_TIME=Chinese (Simplified)_China.936    
+
+attached base packages:
+[1] stats4    parallel  stats     graphics  grDevices utils     datasets  methods  
+[9] base     
+
+other attached packages:
+[1] AnnotationForge_1.26.0 AnnotationDbi_1.46.0   IRanges_2.18.0        
+[4] S4Vectors_0.22.0       Biobase_2.44.0         BiocGenerics_0.30.0   
+[7] RSQLite_2.1.1         
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.1         GO.db_3.8.2        XML_3.98-1.19      digest_0.6.18     
+ [5] bitops_1.0-6       DBI_1.0.0          blob_1.1.1         tools_3.6.0       
+ [9] bit64_0.9-7        RCurl_1.95-4.12    bit_1.1-14         compiler_3.6.0    
+[13] pkgconfig_2.0.2    BiocManager_1.30.4 memoise_1.1.0  
+```
+
 -----
+
+## 代码安装
+
+需要打开命令行（Windows用户下载Git）
+
+
+
+
+
+## 代码说明
 
 GO注释, 基因对应文章, 基因对应的SYMBOL, 以及基因对应的功能描述下载自 <https://zenodo.org/record/2530282#.XDLgk1wzaUk>
 
@@ -28,7 +71,6 @@ GO注释, 基因对应文章, 基因对应的SYMBOL, 以及基因对应的功能
 - PMID不能为空
 - 处理数据时, 字符串一定要注意不要被R语言默认转成因子
 
-<<<<<<< HEAD
 我在构建物种包时用到的代码如下:
 
 **保证**上面提到的4个文件和你代码在同级目录下
@@ -44,16 +86,18 @@ options(stringsAsFactors = F)
 go_df <- read.table("./ATH_GO_TERM.txt",
                       sep="\t", header = FALSE,
                       as.is = TRUE)
+
 go_df$V3 <- ifelse(go_df$V3 == "C", "CC",
                      ifelse(go_df$V3 == "P", "BP",
                             ifelse(go_df$V3 == "F", "MF", "")))
 
 # http://www.geneontology.org/page/guide-go-evidence-codes
-# select high confidence evidence
-go_df <- go_df[! go_df$V4 %in% "IEA",]
+# remove the following code
+# as the IEA is trustbly according to 
+# Pathway enrichment analysis and visualization of omics data using g:Profiler, GSEA, Cytoscape and EnrichmentMap
+# go_df <- go_df[! go_df$V4 %in% "IEA",]
+
 colnames(go_df) <- c("GID","GO","ONTOLOGY","EVIDENCE")
-
-
 
 # GENE-PUB的数据框
 pub_df <- read.table("./Locus_Published_20180330.txt.gz",
@@ -64,8 +108,9 @@ pub_df <- read.table("./Locus_Published_20180330.txt.gz",
 pub_df <- pub_df[grepl(pattern = "^AT\\d", pub_df$name),]
 pub_df <- cbind(GID=do.call(rbind,strsplit(pub_df$name, split = "\\."))[,1],
                 pub_df)
-## pubmed_id 不能为空
-pub_df <- pub_df[!is.na(pub_df$PMID),]
+
+# convert NA to blank
+pub_df$pubmed_id <- ifelse(is.na(pub_df$pubmed_id), "",pub_df$pubmed_id)
 
 colnames(pub_df) <- c("GID","GENEID","REFID",
                       "PMID","PUBYEAR")
@@ -75,8 +120,7 @@ symbol_df <- read.table("./gene_aliases_20180330.txt.gz",
                         sep = "\t",
                         header = TRUE)
 symbol_df <- symbol_df[grepl(pattern = "^AT\\d", symbol_df$name),]
-colnames(symbol_df) <- c("GID","SYMBOL","FULL_NAME")
-
+colnames(symbol_df) <- c("GID","SYMBOL","SYMBOL_NAME")
 
 # GENE-FUNCTION
 func_df <- read.table("./Araport11_functional_descriptions_20180330.txt.gz",
@@ -87,10 +131,11 @@ func_df <- cbind(GID=do.call(rbind,strsplit(func_df$name, split = "\\."))[,1],
                   func_df)
 colnames(func_df) <- c("GID","TXID","GENE_MODEL_TYPE",
                        "SHORT_DESCRIPTION",
-                       "CURATOR_SUMMARY",
-                       "COMPUTATIONAL_DESCRIPTION")
-## 去重复行
-go_df <- go_df[!duplicated(go_df),]
+                       "CURATED_DESCRIPTION",
+                       "DESCRIPTION")
+
+## remove duplicated
+go_df <- go_df[!duplicated(go_df), ]
 go_df <- go_df[,c(1,2,4)]
 pub_df <- pub_df[!duplicated(pub_df),]
 symbol_df <- symbol_df[!duplicated(symbol_df),]
@@ -115,27 +160,6 @@ makeOrgPackage(go=go_df,
   
 )
 
-#install.packages("./org.Atair10.eg.db", repos = NULL,
-#                 type = "source")
+install.packages("./org.Atair10.eg.db", repos = NULL,
+                 type = "source")
 ```
-
-安装方法
-=======
-安装注释包的方法如下:
-```{r}
-install.packages("https://raw.githubusercontent.com/xuzhougeng/org.At.tair.db/master/org.Atair10.eg.db.tgz",
-repos=NULL,type="source")
-```
-
-**注**: 和"org.At.tair.db"不同，你不能用TAIR作为keytype传给cluserProfiler::enrichGO, 而是用GID.
-
-如果安装失败，可能是依赖包没有装好，可以安装旧版本的拟南芥注释，把依赖包装好
-
-```{r}
-# 解决依赖包的问题
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install("org.At.tair.db")
-```
-
-有问题欢迎在issue中提出。

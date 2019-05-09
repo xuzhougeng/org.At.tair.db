@@ -8,16 +8,18 @@ options(stringsAsFactors = F)
 go_df <- read.table("./ATH_GO_TERM.txt",
                       sep="\t", header = FALSE,
                       as.is = TRUE)
+
 go_df$V3 <- ifelse(go_df$V3 == "C", "CC",
                      ifelse(go_df$V3 == "P", "BP",
                             ifelse(go_df$V3 == "F", "MF", "")))
 
 # http://www.geneontology.org/page/guide-go-evidence-codes
-# select high confidence evidence
-go_df <- go_df[! go_df$V4 %in% "IEA",]
+# remove the following code
+# as the IEA is trustbly according to 
+# Pathway enrichment analysis and visualization of omics data using g:Profiler, GSEA, Cytoscape and EnrichmentMap
+# go_df <- go_df[! go_df$V4 %in% "IEA",]
+
 colnames(go_df) <- c("GID","GO","ONTOLOGY","EVIDENCE")
-
-
 
 # GENE-PUB的数据框
 pub_df <- read.table("./Locus_Published_20180330.txt.gz",
@@ -28,8 +30,9 @@ pub_df <- read.table("./Locus_Published_20180330.txt.gz",
 pub_df <- pub_df[grepl(pattern = "^AT\\d", pub_df$name),]
 pub_df <- cbind(GID=do.call(rbind,strsplit(pub_df$name, split = "\\."))[,1],
                 pub_df)
-## pubmed_id 不能为空
-pub_df <- pub_df[!is.na(pub_df$PMID),]
+
+# convert NA to blank
+pub_df$pubmed_id <- ifelse(is.na(pub_df$pubmed_id), "",pub_df$pubmed_id)
 
 colnames(pub_df) <- c("GID","GENEID","REFID",
                       "PMID","PUBYEAR")
@@ -39,8 +42,7 @@ symbol_df <- read.table("./gene_aliases_20180330.txt.gz",
                         sep = "\t",
                         header = TRUE)
 symbol_df <- symbol_df[grepl(pattern = "^AT\\d", symbol_df$name),]
-colnames(symbol_df) <- c("GID","SYMBOL","FULL_NAME")
-
+colnames(symbol_df) <- c("GID","SYMBOL","SYMBOL_NAME")
 
 # GENE-FUNCTION
 func_df <- read.table("./Araport11_functional_descriptions_20180330.txt.gz",
@@ -51,10 +53,11 @@ func_df <- cbind(GID=do.call(rbind,strsplit(func_df$name, split = "\\."))[,1],
                   func_df)
 colnames(func_df) <- c("GID","TXID","GENE_MODEL_TYPE",
                        "SHORT_DESCRIPTION",
-                       "CURATOR_SUMMARY",
-                       "COMPUTATIONAL_DESCRIPTION")
-## 去重复行
-go_df <- go_df[!duplicated(go_df),]
+                       "CURATED_DESCRIPTION",
+                       "DESCRIPTION")
+
+## remove duplicated
+go_df <- go_df[!duplicated(go_df), ]
 go_df <- go_df[,c(1,2,4)]
 pub_df <- pub_df[!duplicated(pub_df),]
 symbol_df <- symbol_df[!duplicated(symbol_df),]
@@ -78,6 +81,7 @@ makeOrgPackage(go=go_df,
                goTable = "go"
   
 )
+
 
 #install.packages("./org.Atair10.eg.db", repos = NULL,
 #                 type = "source")
