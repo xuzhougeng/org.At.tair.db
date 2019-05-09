@@ -83,5 +83,5 @@ makeOrgPackage(go=go_df,
 )
 
 
-#install.packages("./org.Atair10.eg.db", repos = NULL,
-#                 type = "source")
+install.packages("./org.Atair10.eg.db", repos = NULL,
+                 type = "source")
