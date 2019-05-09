@@ -49,6 +49,12 @@ loaded via a namespace (and not attached):
 
 需要打开命令行（Windows用户下载Git）
 
+```bash
+git clone https://github.com/xuzhougeng/org.At.tair.db.git
+cd org.At.tair.db
+Rscripts
+```
+
 
 
 
